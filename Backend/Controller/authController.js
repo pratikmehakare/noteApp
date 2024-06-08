@@ -2,7 +2,6 @@ const User = require("../model/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcryptjs');
 
-
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -23,13 +22,15 @@ exports.login = async (req, res) => {
     const isUser = await User.findOne({ email: email });
 
     if (!isUser) {
-      return res.json({
+      return res.status(404).json({
         error: true,
         message: "User Not Found",
       });
     }
 
-    if (isUser.email === email &&  bcrypt.compare(isUser.password,password)) {
+    const isPasswordValid = await bcrypt.compare(password, isUser.password);
+
+    if (isPasswordValid) {
       const user = { user: isUser };
 
       const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
@@ -45,7 +46,7 @@ exports.login = async (req, res) => {
     } else {
       return res.status(400).json({
         error: true,
-        message: "Invalid Credentials..",
+        message: "Invalid Credentials",
       });
     }
   } catch (error) {
@@ -55,6 +56,7 @@ exports.login = async (req, res) => {
     });
   }
 };
+
 
 exports.signUp = async (req, res) => {
   try{

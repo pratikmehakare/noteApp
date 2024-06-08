@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Navbar from "../../commponents/Navbar/Navbar"
+import Navbar from "../../commponents/Navbar/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import Password from "../../commponents/Input/Password";
 import { validateEmail } from "../../utils/helper";
@@ -34,9 +34,11 @@ const Login = () => {
       });
 
       if (response.data && response.data.accessToken) {
-        toast.success("Login")
+        toast.success("Login Successful");
         localStorage.setItem("token", response.data.accessToken);
         navigate("/dashboard");
+      } else {
+        setError("Invalid Credentials");
       }
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
